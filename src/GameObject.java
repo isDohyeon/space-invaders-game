@@ -34,6 +34,6 @@ public class GameObject {
     }
 
     public int getIndex() {
-        return getPosY() * (SpaceInvaderApp.CENTER_WIDTH + 1) + getPosX();
+        return (getPosY() * (SpaceInvaderApp.CENTER_WIDTH + 1)) + getPosX();
     }
 }
