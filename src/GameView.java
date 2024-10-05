@@ -6,10 +6,11 @@ public class GameView extends JFrame {
     GameController controller;
     public PlayerObject player;
 
-    public static final int ROWS = 25;
+    private static final int ROWS = 25;
     public static final int CENTER_WIDTH = 73;
-    public static final int LEFT_WIDTH = 3;
-    public static final int RIGHT_WIDTH = 24;
+    private static final int LEFT_WIDTH = 3;
+    private static final int RIGHT_WIDTH = 24;
+    private static final int ENEMY_AMOUNT = 8;
 
     public JTextArea leftTextArea = getTextArea(LEFT_WIDTH);
     public JTextArea centerTextArea = getTextArea(CENTER_WIDTH);
@@ -20,15 +21,17 @@ public class GameView extends JFrame {
     public JPanel rightPanel = new JPanel();
 
     public GameView() {
+        // 각 패널 세팅, Frame 에 add
         setPanel(leftPanel, leftTextArea);
         setPanel(centerPanel, centerTextArea);
         setPanel(rightPanel, rightTextArea);
-
+        // 초기 화면 그리기
         printLeftTextArea();
         printCenterTextArea();
         printRightTextArea();
-
+        // 프레임 세팅
         setFrame();
+        // 화면에 보이기
         setVisible(true);
     }
 
@@ -64,7 +67,7 @@ public class GameView extends JFrame {
         return textArea;
     }
 
-    private static void breakLineByCondition(JTextArea textArea, int i) {
+    private void breakLineByCondition(JTextArea textArea, int i) {
         if (i != ROWS - 1) {
             textArea.append("\n");
         }
@@ -77,41 +80,49 @@ public class GameView extends JFrame {
         }
     }
 
-    public void replacePos(GameObject o, int dx, int dy) {
-        int curX = o.getPosX();
-        int curY = o.getPosY();
-        if ((curX + dx <= 1 || curX + dx >= CENTER_WIDTH - 2 || curY + dy < 0 || curY + dy >= ROWS)) {
+    public void replacePosition(GameObject object, int dx, int dy) {
+        int curX = object.getPosX();
+        int curY = object.getPosY();
+        if (isOutOfBound(dx, dy, curX, curY)) {
             return;
         }
 
-        String replaceStr = o instanceof BulletObject ? " " : "     ";
-        int size = o instanceof BulletObject ? 0 : 2;
+        String replaceStr = object instanceof BulletObject ? " " : "     ";
+        int size = object instanceof BulletObject ? 0 : 2;
 
-        replaceByObject(o, replaceStr, size);
-        printNewPosition(o, dx, dy, curX, curY, size);
+        replaceIndex(object, replaceStr, size);
+        object.setPosX(curX + dx);
+        object.setPosY(curY + dy);
+        replaceIndex(object, object.getImage(), size);
     }
 
-    private void replaceByObject(GameObject o, String replaceStr, int size) {
-        centerTextArea.replaceRange(replaceStr, o.getIndex() - size, o.getIndex() + size + 1);
+    private void replaceIndex(GameObject object, String replaceStr, int size) {
+        centerTextArea.replaceRange(replaceStr, object.getIndex() - size, object.getIndex() + size + 1);
     }
 
-    private void printNewPosition(GameObject o, int dx, int dy, int curX, int curY, int size) {
-        o.setPosX(curX + dx);
-        o.setPosY(curY + dy);
-        replaceByObject(o, o.getImage(), size);
+    private static boolean isOutOfBound(int dx, int dy, int curX, int curY) {
+        return curX + dx <= 1 || curX + dx >= CENTER_WIDTH - 2 || curY + dy < 0 || curY + dy >= ROWS;
     }
 
     private void printCenterTextArea() {
+        initCenter();
+        initEnemy();
+        replacePosition(player = new PlayerObject(36, 23), 0, 0);
+    }
+
+    private void initCenter() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < centerTextArea.getColumns(); j++) {
                 centerTextArea.append(" ");
             }
             breakLineByCondition(centerTextArea, i);
         }
+    }
 
+    private void initEnemy() {
         int x = 7;
         int y = 1;
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < ENEMY_AMOUNT; i++) {
             createEnemy(x, y);
 
             x += 6;
@@ -121,13 +132,11 @@ public class GameView extends JFrame {
                 y -= 2;
             }
         }
-
-        replacePos(player = new PlayerObject(36, 23), 0, 0);
     }
 
     public void createEnemy(int posX, int posY) {
         EnemyObject enemy = new EnemyObject(posX, posY);
-        replacePos(enemy, 0, 0);
+        replacePosition(enemy, 0, 0);
     }
 
     private void printRightTextArea() {
@@ -150,11 +159,15 @@ public class GameView extends JFrame {
                 rightTextArea.append("#......... by Dohyeon...\n");
                 continue;
             }
+
             rightTextArea.append("#.......................");
             breakLineByCondition(rightTextArea, i);
         }
     }
 
+    public void updateScore() {
+        rightTextArea.replaceRange(controller.getScore(), 63, 64);
+    }
 
     public JFrame getFrame() {
         return this;

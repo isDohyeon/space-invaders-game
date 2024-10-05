@@ -1,6 +1,5 @@
 public class SpaceInvaderApp {
 
-    private static int score;
     GameView view;
     GameController controller;
 

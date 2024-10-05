@@ -6,14 +6,18 @@ import java.awt.event.KeyEvent;
 public class GameController {
 
     private final GameView view;
+    private int score;
 
     public GameController(GameView view) {
         this.view = view;
+        mapKeyBinding(view);
+    }
 
-        addKeyBinding(KeyEvent.VK_RIGHT, e -> view.replacePos(view.player, 1, 0));
-        addKeyBinding(KeyEvent.VK_LEFT, e -> view.replacePos(view.player, -1, 0));
-        addKeyBinding(KeyEvent.VK_UP, e -> view.replacePos(view.player, 0, -1));
-        addKeyBinding(KeyEvent.VK_DOWN, e -> view.replacePos(view.player, 0, 1));
+    private void mapKeyBinding(GameView view) {
+        addKeyBinding(KeyEvent.VK_RIGHT, e -> view.replacePosition(view.player, 1, 0));
+        addKeyBinding(KeyEvent.VK_LEFT, e -> view.replacePosition(view.player, -1, 0));
+        addKeyBinding(KeyEvent.VK_UP, e -> view.replacePosition(view.player, 0, -1));
+        addKeyBinding(KeyEvent.VK_DOWN, e -> view.replacePosition(view.player, 0, 1));
         addKeyBinding(KeyEvent.VK_SPACE, e -> fireBullet());
     }
 
@@ -32,5 +36,13 @@ public class GameController {
         int posY = view.player.getPosY() - 1;
         Thread bulletThread = new Thread(new BulletObject(posX, posY, view));
         bulletThread.start();
+    }
+
+    private void increaseScore() {
+        score++;
+    }
+
+    public String getScore() {
+        return String.valueOf(score);
     }
 }

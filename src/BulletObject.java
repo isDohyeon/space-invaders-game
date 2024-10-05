@@ -17,7 +17,7 @@ public class BulletObject extends GameObject implements Runnable {
                     view.centerTextArea.replaceRange(" ", getIndex(), getIndex() + 1);
                     return;
                 }
-                view.replacePos(this, 0, -1);
+                view.replacePosition(this, 0, -1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
