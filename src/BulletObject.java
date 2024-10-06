@@ -11,13 +11,15 @@ public class BulletObject extends GameObject implements Runnable {
     @Override
     public void run() {
         while (true) {
+            if (getPosY() <= 0) {
+                view.replaceIndex(this, " ", 0);
+                return;
+            }
+
+            view.replacePosition(this, 0, -1);
+
             try {
                 Thread.sleep(50);
-                if (getPosY() <= 0) {
-                    view.centerTextArea.replaceRange(" ", getIndex(), getIndex() + 1);
-                    return;
-                }
-                view.replacePosition(this, 0, -1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

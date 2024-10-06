@@ -7,31 +7,30 @@ public class GameView extends JFrame {
     public PlayerObject player;
 
     private static final int ROWS = 25;
-    public static final int CENTER_WIDTH = 73;
     private static final int LEFT_WIDTH = 3;
+    public static final int CENTER_WIDTH = 73;
     private static final int RIGHT_WIDTH = 24;
-    private static final int ENEMY_AMOUNT = 8;
 
-    public JTextArea leftTextArea = getTextArea(LEFT_WIDTH);
-    public JTextArea centerTextArea = getTextArea(CENTER_WIDTH);
-    public JTextArea rightTextArea = getTextArea(RIGHT_WIDTH);
+    private static final int ENEMY_AMOUNT = 8;
 
     public JPanel leftPanel = new JPanel();
     public JPanel centerPanel = new JPanel();
     public JPanel rightPanel = new JPanel();
 
+    public JTextArea leftTextArea = getTextArea(LEFT_WIDTH);
+    public JTextArea centerTextArea = getTextArea(CENTER_WIDTH);
+    public JTextArea rightTextArea = getTextArea(RIGHT_WIDTH);
+
     public GameView() {
-        // 각 패널 세팅, Frame 에 add
         setPanel(leftPanel, leftTextArea);
         setPanel(centerPanel, centerTextArea);
         setPanel(rightPanel, rightTextArea);
-        // 초기 화면 그리기
+
         printLeftTextArea();
         printCenterTextArea();
         printRightTextArea();
-        // 프레임 세팅
+
         setFrame();
-        // 화면에 보이기
         setVisible(true);
     }
 
@@ -96,7 +95,7 @@ public class GameView extends JFrame {
         replaceIndex(object, object.getImage(), size);
     }
 
-    private void replaceIndex(GameObject object, String replaceStr, int size) {
+    public void replaceIndex(GameObject object, String replaceStr, int size) {
         centerTextArea.replaceRange(replaceStr, object.getIndex() - size, object.getIndex() + size + 1);
     }
 
