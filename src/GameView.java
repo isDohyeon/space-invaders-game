@@ -35,7 +35,7 @@ public class GameView extends JFrame {
     }
 
     private void setFrame() {
-        setTitle("Space Invader");
+        setTitle("Let's Play Space Invader");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         add(leftPanel, BorderLayout.WEST);
@@ -51,14 +51,14 @@ public class GameView extends JFrame {
         add(panel);
     }
 
-    private void setPanelSize(JPanel panel, JTextArea textArea) {
+    private static void setPanelSize(JPanel panel, JTextArea textArea) {
         Dimension textAreaSize = textArea.getPreferredSize();
         panel.setPreferredSize(textAreaSize);
         panel.setMaximumSize(textAreaSize);
         panel.setMinimumSize(textAreaSize);
     }
 
-    private JTextArea getTextArea(int columns) {
+    private static JTextArea getTextArea(int columns) {
         JTextArea textArea = new JTextArea(ROWS, columns);
         textArea.setFont(new Font("Monospaced", Font.PLAIN, 20));
         textArea.setLineWrap(false);
@@ -66,7 +66,7 @@ public class GameView extends JFrame {
         return textArea;
     }
 
-    private void breakLineByCondition(JTextArea textArea, int i) {
+    private static void breakLineByCondition(JTextArea textArea, int i) {
         if (i != ROWS - 1) {
             textArea.append("\n");
         }
@@ -133,7 +133,7 @@ public class GameView extends JFrame {
         }
     }
 
-    public void createEnemy(int posX, int posY) {
+    private void createEnemy(int posX, int posY) {
         EnemyObject enemy = new EnemyObject(posX, posY);
         replacePosition(enemy, 0, 0);
     }
