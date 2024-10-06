@@ -6,7 +6,6 @@ public class SpaceInvaderApp {
     SpaceInvaderApp() {
         view = new GameView();
         controller = new GameController(view);
-        view.setController(controller);
     }
 
     public static void main(String[] args) {

@@ -3,6 +3,7 @@ public class GameObject {
     private int posX;
     private int posY;
     private String image;
+    private String replaceImage;
 
     public GameObject(int posX, int posY) {
         setPosX(posX);
@@ -31,6 +32,14 @@ public class GameObject {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getReplaceImage() {
+        return replaceImage;
+    }
+
+    public void setReplaceImage(String replaceImage) {
+        this.replaceImage = replaceImage;
     }
 
     public int getIndex() {
