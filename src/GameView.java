@@ -48,7 +48,7 @@ public class GameView extends JFrame {
         add(panel);
     }
 
-    private static void setPanelSize(JPanel panel, JTextArea textArea) {
+    private void setPanelSize(JPanel panel, JTextArea textArea) {
         Dimension textAreaSize = textArea.getPreferredSize();
         panel.setPreferredSize(textAreaSize);
         panel.setMaximumSize(textAreaSize);
@@ -63,7 +63,7 @@ public class GameView extends JFrame {
         return textArea;
     }
 
-    private static void breakLineByCondition(JTextArea textArea, int i) {
+    private void breakLineByCondition(JTextArea textArea, int i) {
         if (i != HEIGHT - 1) {
             textArea.append("\n");
         }
@@ -88,7 +88,7 @@ public class GameView extends JFrame {
         printNewObject(object, indexRange, newX, newY);
     }
 
-    private static boolean isOutOfBound(int newX, int newY) {
+    private boolean isOutOfBound(int newX, int newY) {
         return newX <= 1 || newX >= CENTER_WIDTH - 2 || newY < 0 || newY >= HEIGHT;
     }
 
