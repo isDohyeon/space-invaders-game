@@ -1,6 +1,6 @@
 public class BulletObject extends GameObject implements Runnable {
 
-    GameView view;
+    private final GameView view;
 
     public BulletObject(int posX, int posY, GameView view) {
         super(posX, posY);

@@ -10,13 +10,13 @@ public class GameView extends JFrame {
 
     private static final int ENEMY_AMOUNT = 8;
 
-    public JPanel leftPanel = new JPanel();
-    public JPanel centerPanel = new JPanel();
-    public JPanel rightPanel = new JPanel();
+    private final JPanel leftPanel = new JPanel();
+    private final JPanel centerPanel = new JPanel();
+    private final JPanel rightPanel = new JPanel();
 
-    public JTextArea leftTextArea = getTextArea(LEFT_WIDTH);
-    public JTextArea centerTextArea = getTextArea(CENTER_WIDTH);
-    public JTextArea rightTextArea = getTextArea(RIGHT_WIDTH);
+    private final JTextArea leftTextArea = getTextArea(LEFT_WIDTH);
+    private final JTextArea centerTextArea = getTextArea(CENTER_WIDTH);
+    private final JTextArea rightTextArea = getTextArea(RIGHT_WIDTH);
 
     public GameView() {
         setPanel(leftPanel, leftTextArea);
