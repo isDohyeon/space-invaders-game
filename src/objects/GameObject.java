@@ -1,9 +1,12 @@
-public class GameObject {
+package objects;
 
-    private int posX;
-    private int posY;
-    private String image;
-    private String replaceImage;
+import view.GameView;
+
+public abstract class GameObject {
+
+    protected int posX;
+    protected int posY;
+    protected String image;
 
     public GameObject(int posX, int posY) {
         setPosX(posX);
@@ -28,18 +31,6 @@ public class GameObject {
 
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getReplaceImage() {
-        return replaceImage;
-    }
-
-    public void setReplaceImage(String replaceImage) {
-        this.replaceImage = replaceImage;
     }
 
     public int getIndex() {
