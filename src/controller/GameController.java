@@ -31,14 +31,14 @@ public class GameController {
 
     public void run() {
         gameTimer = new Timer();
-        gameTimer.scheduleAtFixedRate(new TimerTask() {
+        gameTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                checkCollisions();
                 updateGameObjects();
                 checkGameState();
-                checkCollisions();
             }
-        }, 0 ,10);
+        }, 0 ,5);
     }
 
     private void updateGameObjects() {
@@ -95,7 +95,7 @@ public class GameController {
     }
 
     private boolean isCollision(int x1, int y1, int x2, int y2, int range) {
-        return (x1 == x2 && y1 == y2) || (x1 >= (x2 - range) && x1 <= (x2 + range) && y1 == y2);
+        return x1 >= (x2 - range) && x1 <= (x2 + range) && y1 == y2;
     }
 
     private void endGame(boolean isWin) {
