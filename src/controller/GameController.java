@@ -1,130 +1,78 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.Timer;
-import java.util.TimerTask;
-import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
-import objects.BulletObject;
-import objects.EnemyBulletObject;
-import objects.EnemyObject;
-import objects.PlayerObject;
-import service.EnemyService;
-import service.PlayerService;
-import view.GameView;
+import model.ObjectHandler;
+import model.PlayerHandler;
+import view.InputView;
+import view.OutputView;
 
-public class GameController {
+public class GameController implements Runnable {
 
-    private final GameView view = new GameView();
-    private final EnemyService enemyService;
-    private final PlayerService playerService;
-    private int score = 0;
-    private Timer gameTimer;
+    private final ObjectHandler objectHandler;
+    private final PlayerHandler playerHandler;
+    private final InputView inputView;
+    private final OutputView outputView;
+    private long cycleStartTime;
+    private boolean playerLose;
+    private boolean isGameOver;
 
-    public GameController() {
-        this.enemyService = new EnemyService();
-        this.playerService = new PlayerService();
-        setupKeyBindings();
+    public GameController(PlayerHandler playerHandler, ObjectHandler objectHandler, InputView inputView, OutputView outputView) {
+        this.objectHandler = objectHandler;
+        this.playerHandler = playerHandler;
+        this.inputView = inputView;
+        this.outputView = outputView;
+        cycleStartTime = System.currentTimeMillis();
     }
 
+    @Override
     public void run() {
-        gameTimer = new Timer();
-        gameTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                checkCollisions();
-                updateGameObjects();
-                checkGameState();
-            }
-        }, 0 ,5);
+        while (!isGameOver) {
+            sleep();
+            handlePlayerAction();
+            createGameObjects();
+            objectHandler.updateGameObjects();
+            updateView();
+            isGameOver = objectHandler.isGameOver();
+        }
+        playerLose = objectHandler.isPlayerDead();
     }
 
-    private void updateGameObjects() {
-        view.initCenterTextArea();
-
-        view.printNewObject(playerService.getPlayer().getImage(), playerService.getPlayer().getIndex());
-        for (BulletObject playerBullet : playerService.getPlayerBullets()) {
-            view.printNewObject(playerBullet.getImage(), playerBullet.getIndex());
-        }
-
-        for (EnemyObject enemy : enemyService.getEnemies()) {
-            view.printNewObject(enemy.getImage(), enemy.getIndex());
-        }
-        for (EnemyBulletObject enemyBullet : enemyService.getEnemyBullets()) {
-            view.printNewObject(enemyBullet.getImage(), enemyBullet.getIndex());
+    private void createGameObjects() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - cycleStartTime >= 1000) {
+            objectHandler.createEnemyBullet();
+            objectHandler.createBonusObject();
+            cycleStartTime = currentTime;
         }
     }
 
-    private void checkGameState() {
-        if (enemyService.getEnemies().isEmpty()) {
-            endGame(true);
-        }
-        if (!playerService.getPlayer().getAlive()) {
-            endGame(false);
-        }
+    private void updateView() {
+        outputView.updateGameView(objectHandler.getGameData());
+        outputView.updateScore(objectHandler.getGameData());
     }
 
-    private void checkCollisions() {
-        handlePlayerBulletCollisions();
-        checkPlayerHitByEnemyBullets();
-    }
-
-    private void handlePlayerBulletCollisions() {
-        for (BulletObject playerBullet : playerService.getPlayerBullets()) {
-            for (EnemyObject enemy : enemyService.getEnemies()) {
-                if (isCollision(playerBullet.getPosX(), playerBullet.getPosY(), enemy.getPosX(), enemy.getPosY(), playerBullet.getImage().length())) {
-                    score += 10;
-                    view.updateScore(score);
-                    playerService.removePlayerBullet(playerBullet);
-                    enemyService.removeEnemy(enemy);
-                    break;
-                }
-            }
+    private void sleep() {
+        try {
+            Thread.sleep(16);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    private void checkPlayerHitByEnemyBullets() {
-        for (EnemyBulletObject enemyBullet : enemyService.getEnemyBullets()) {
-            PlayerObject player = playerService.getPlayer();
-            if (isCollision(enemyBullet.getPosX(), enemyBullet.getPosY(), player.getPosX(), player.getPosY(), enemyBullet.getImage().length())) {
-                playerService.getPlayer().setAlive(false);
-            }
+    private void handlePlayerAction() {
+        String command = inputView.getLastCommand();
+        if (playerHandler.movePlayer(command)) {
+            updateView();
+        }
+        if (inputView.isSpacePressed()) {
+            playerHandler.fireBullet();
         }
     }
 
-    private boolean isCollision(int x1, int y1, int x2, int y2, int range) {
-        return x1 >= (x2 - range) && x1 <= (x2 + range) && y1 == y2;
+    public boolean isPlayerLose() {
+        return playerLose;
     }
 
-    private void endGame(boolean isWin) {
-        gameTimer.cancel();
-        view.showGameOverMessage(isWin);
-        addKeyBinding(KeyEvent.VK_Y, e -> restart());
-        addKeyBinding(KeyEvent.VK_N, e -> System.exit(0));
-    }
-
-    public void restart() {
-        view.dispose();
-        new GameController().run();
-    }
-
-    private void setupKeyBindings() {
-        addKeyBinding(KeyEvent.VK_RIGHT, e -> playerService.movePlayer(2, 0));
-        addKeyBinding(KeyEvent.VK_LEFT, e -> playerService.movePlayer(-2, 0));
-        addKeyBinding(KeyEvent.VK_UP, e -> playerService.movePlayer(0, -1));
-        addKeyBinding(KeyEvent.VK_DOWN, e -> playerService.movePlayer(0, 1));
-        addKeyBinding(KeyEvent.VK_SPACE, e -> playerService.fireBullet());
-    }
-
-    private void addKeyBinding(int keyCode, ActionListener listener) {
-        view.getRootPane().getInputMap().put(KeyStroke.getKeyStroke(keyCode, 0), String.valueOf(keyCode));
-        view.getRootPane().getActionMap().put(String.valueOf(keyCode), new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.actionPerformed(e);
-            }
-        });
+    public boolean isGameOver() {
+        return isGameOver;
     }
 }
